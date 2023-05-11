@@ -89,14 +89,39 @@ var averageBalance = (arr) => {
     let averageB = _.reduce(arr, (acc, el) => {
          
          return acc +=  Number(el.balance.replace(/^(-)|[^0-9.]+/g, '$1'))
-    })
-    console.log(averageB.toFixed(2), 'average')
-   return Number(averageB.toFixed(2))
+    }, 0)
+      
+   //return average by dividing by length of array
+   return averageB.toFixed(2) / arr.length;
 }
+//find out how many customers names begin with a given letter
+//use filter
+var firstLetterCount = (arr, letter) => {
 
-var firstLetterCount;
+  let beginsWith = _.filter(arr, (el) => {
 
-var friendFirstLetterCount;
+         return el.name[0].toLowerCase() === letter.toLowerCase();    
+  })
+  //
+return beginsWith.length;
+}
+//find how many friends of a given customer have names that start with a given letter
+var friendFirstLetterCount = (arr, customer, letter) => {
+console.log(customer, 110)
+  let friendFL = _.filter(arr, (el) => {
+     
+    
+    if(el.name === customer){
+
+      return firstLetterCount(el.friends, letter)
+
+    }
+    
+  }
+  )
+     console.log(friendFL, '121')
+     return friendFL.length;
+}
 
 var friendsCount;
 
