@@ -156,30 +156,30 @@ let hash = _.reduce(flattened, (acc, el) => {
 //convert hash to array of key value pairs
 let arrayOfCounts = Object.entries(hash);
 //  console.log(arrayOfCounts, 'fffffffffffffffffffffffffffffffffffffffffffffuckkkkkkkkkkkkkkkkkkkkkkk')
-//sort array of counts
-//map arrayOfCounts comparing counts to order elements?
+let popularTags = _.filter(arrayOfCounts, (el) => {
+   
+  return el[1] > 2;
 
-
-// console.log(ordered, "fuckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
-
-
+})
+console.log(popularTags, 'fuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuckkkkkkkkkkkk');
+return _.map(popularTags, (el) => el[0]);
 
 }
 
 var genderCount = (arr) => {
     
   let count = _.reduce(arr, (acc, el) => {
-
-    if(acc[el].gender){
-     acc[el].gender++
+     
+    if(acc[el.gender]){
+     acc[el.gender]++
     } else {
-      acc[el].gender = 1;
+      acc[el.gender] = 1;
     }
-    console.log(acc, 'accccccccccccccccccccccccccccccc')
     return acc;
 
   }, {})
 console.log(count, 'fuckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+return count;
 }
 
 //////////////////////////////////////////////////////////////////////
