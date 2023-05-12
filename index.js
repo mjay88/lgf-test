@@ -61,7 +61,7 @@ var oldestCustomer = (arr) => {
       return acc;
     }
   });
-//   console.log(oldest, "oldest");
+  //   console.log(oldest, "oldest");
   return oldest.name;
 };
 //same as above
@@ -72,7 +72,8 @@ var youngestCustomer = (arr) => {
     if (el.age < acc.age) {
       //if we find a younger age, return that el
       return el;
-    } else {//return acc
+    } else {
+      //return acc
       return acc;
     }
   });
@@ -85,49 +86,101 @@ var youngestCustomer = (arr) => {
 //convert balance to usable string and add to acc
 
 var averageBalance = (arr) => {
+  let averageB = _.reduce(
+    arr,
+    (acc, el) => {
+      return (acc += Number(el.balance.replace(/^(-)|[^0-9.]+/g, "$1")));
+    },
+    0
+  );
 
-    let averageB = _.reduce(arr, (acc, el) => {
-         
-         return acc +=  Number(el.balance.replace(/^(-)|[^0-9.]+/g, '$1'))
-    }, 0)
-      
-   //return average by dividing by length of array
-   return averageB.toFixed(2) / arr.length;
-}
+  //return average by dividing by length of array
+  return averageB.toFixed(2) / arr.length;
+};
 //find out how many customers names begin with a given letter
 //use filter
 var firstLetterCount = (arr, letter) => {
-
   let beginsWith = _.filter(arr, (el) => {
-
-         return el.name[0].toLowerCase() === letter.toLowerCase();    
-  })
+    return el.name[0].toLowerCase() === letter.toLowerCase();
+  });
   //
-return beginsWith.length;
-}
+  return beginsWith.length;
+};
 //find how many friends of a given customer have names that start with a given letter
 var friendFirstLetterCount = (arr, customer, letter) => {
-console.log(customer, 110)
-  let friendFL = _.filter(arr, (el) => {
-     
-    
-    if(el.name === customer){
-
-      return firstLetterCount(el.friends, letter)
-
+  //get customer
+  let customerObj = _.filter(arr, (el) => el.name === customer);
+  //get customers frineds
+  let friendsArray = customerObj[0].friends;
+  //return friends counts
+  return firstLetterCount(friendsArray, letter);
+};
+//find customers who share a given friends
+//use filter
+var friendsCount = (arr, name) => {
+  let haveSameFriend = _.filter(arr, (el) => {
+    if (
+      _.some(el.friends, (friend) => {
+        return friend.name === name;
+      })
+    ) {
+      return el;
     }
+  });
+  
+  haveSameFriend = _.map(haveSameFriend, (el) => {
+    return el.name;
+  })
+  return haveSameFriend;
+};
+//returns an array of top tags
+//iterate through elements,
+ //iterate through tags array
+
+var topThreeTags = (arr) => {
+ //simplify data
+  let onlyTags = _.map(arr, (el) => el.tags)
+//flatten onlyTags with reduce
+let flattened = _.reduce(onlyTags, (acc, el) => {
+  return acc.concat(el);
+}, [])
+//create hash table of tags using reduce
+let hash = _.reduce(flattened, (acc, el) => {
     
-  }
-  )
-     console.log(friendFL, '121')
-     return friendFL.length;
+  acc[el] ? acc[el]++ : acc[el] = 1;
+  return acc
+    
+
+}, {})
+// console.log(hash);
+//convert hash to array of key value pairs
+let arrayOfCounts = Object.entries(hash);
+//  console.log(arrayOfCounts, 'fffffffffffffffffffffffffffffffffffffffffffffuckkkkkkkkkkkkkkkkkkkkkkk')
+//sort array of counts
+//map arrayOfCounts comparing counts to order elements?
+
+
+// console.log(ordered, "fuckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+
+
+
 }
 
-var friendsCount;
+var genderCount = (arr) => {
+    
+  let count = _.reduce(arr, (acc, el) => {
 
-var topThreeTags;
+    if(acc[el].gender){
+     acc[el].gender++
+    } else {
+      acc[el].gender = 1;
+    }
+    console.log(acc, 'accccccccccccccccccccccccccccccc')
+    return acc;
 
-var genderCount;
+  }, {})
+console.log(count, 'fuckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+}
 
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////
