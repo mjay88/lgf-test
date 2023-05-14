@@ -22,19 +22,14 @@ var _ = require("underbar");
  */
 
 var maleCount = function (array) {
-  let count = 0;
-  for (let el of array) {
-    if (el.gender === "male") {
-      count++;
-    }
-  }
-  return count;
+  let count = _.filter(array, (el) => el.gender === "male");
+  return count.length;
 };
 
-var femaleCount = function (arr) {
+var femaleCount = (arr) => {
   let females = _.reduce(
     arr,
-    function (acc, curr) {
+    (acc, curr) => {
       if (curr.gender === "female") {
         acc++;
       }
@@ -43,7 +38,6 @@ var femaleCount = function (arr) {
     },
     0
   );
-
   return females;
 };
 //find the oldest customers name.
@@ -51,7 +45,7 @@ var femaleCount = function (arr) {
 //if the current elements age is greater than seed objects age, replace seed object with age of current element
 var oldestCustomer = (arr) => {
   //leave seed empty
-  let oldest = _.reduce(arr, function (acc, el) {
+  let oldest = _.reduce(arr, (acc, el) => {
     //acc starts out as first element in array, compare first element to  next element
     if (el.age > acc.age) {
       //if age value is greater than acc age value
@@ -61,7 +55,6 @@ var oldestCustomer = (arr) => {
       return acc;
     }
   });
-  //   console.log(oldest, "oldest");
   return oldest.name;
 };
 //same as above
@@ -89,18 +82,20 @@ var averageBalance = (arr) => {
   let averageB = _.reduce(
     arr,
     (acc, el) => {
+      //convert strings to number, remove all nonalphanumeric,
       return (acc += Number(el.balance.replace(/^(-)|[^0-9.]+/g, "$1")));
     },
     0
   );
-
-  //return average by dividing by length of array
+  //return average by dividing by length of array, and return only two decimals
   return averageB.toFixed(2) / arr.length;
 };
+
 //find out how many customers names begin with a given letter
 //use filter
 var firstLetterCount = (arr, letter) => {
   let beginsWith = _.filter(arr, (el) => {
+    //compare first index of name to target letter
     return el.name[0].toLowerCase() === letter.toLowerCase();
   });
   //
@@ -112,75 +107,94 @@ var friendFirstLetterCount = (arr, customer, letter) => {
   let customerObj = _.filter(arr, (el) => el.name === customer);
   //get customers frineds
   let friendsArray = customerObj[0].friends;
-  //return friends counts
+  //return friends counts by using firstLetterCount function above
   return firstLetterCount(friendsArray, letter);
 };
-//find customers who share a given friends
+//find customers' who share a given friend
 //use filter
 var friendsCount = (arr, name) => {
   let haveSameFriend = _.filter(arr, (el) => {
+    //need to return a boolean, so use some
     if (
+      //iterate through friends array, look at each friends
       _.some(el.friends, (friend) => {
+        //return true if a friend in friends array is equal to our target name
         return friend.name === name;
       })
     ) {
+      //if we find target in friends array, return that element
       return el;
     }
   });
-  
+  //pull the name out of haveSameFriends array, which is an array of objects
   haveSameFriend = _.map(haveSameFriend, (el) => {
     return el.name;
-  })
+  });
   return haveSameFriend;
 };
 //returns an array of top tags
 //iterate through elements,
- //iterate through tags array
+//iterate through tags array
 
 var topThreeTags = (arr) => {
- //simplify data
-  let onlyTags = _.map(arr, (el) => el.tags)
-//flatten onlyTags with reduce
-let flattened = _.reduce(onlyTags, (acc, el) => {
-  return acc.concat(el);
-}, [])
-//create hash table of tags using reduce
-let hash = _.reduce(flattened, (acc, el) => {
-    
-  acc[el] ? acc[el]++ : acc[el] = 1;
-  return acc
-    
+  //simplify data
+  let onlyTags = _.map(arr, (el) => el.tags);
+  //flatten onlyTags with reduce into one array
+  let flattened = _.reduce(
+    onlyTags,
+    (acc, el) => {
+      return acc.concat(el);
+    },
+    []
+  );
+  //create hash table of tag counts using reduce
+  let hash = _.reduce(
+    flattened,
+    //iterate through flattened, acc is object/hash, el is string
+    (acc, el) => {
+      //if the string exists as a property, add to its count total, otherwise create property and initialize with value of 1
+      acc[el] ? acc[el]++ : (acc[el] = 1);
+      //don't forget to return acc
+      return acc;
+    },
+    {}
+  );
+  // console.log(hash, 'dirty old hassssssssh**********************************************');
 
-}, {})
-// console.log(hash);
-//convert hash to array of key value pairs
-let arrayOfCounts = Object.entries(hash);
-//  console.log(arrayOfCounts, 'fffffffffffffffffffffffffffffffffffffffffffffuckkkkkkkkkkkkkkkkkkkkkkk')
-let popularTags = _.filter(arrayOfCounts, (el) => {
-   
-  return el[1] > 2;
-
-})
-console.log(popularTags, 'fuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuckkkkkkkkkkkk');
-return _.map(popularTags, (el) => el[0]);
-
-}
+  //convert hash to array of key value pairs
+  let arrayOfCounts = Object.entries(hash);
+  //  console.log(arrayOfCounts, 'arrayofcounts**********************************************')
+  //filter for elements with counts greater than 2, can't use sort
+  let popularTags = _.filter(arrayOfCounts, (el) => {
+    return el[1] > 2;
+  });
+  // console.log(popularTags, "********************************************************");
+  //remove count from elements so we just have an array of strings
+  return _.map(popularTags, (el) => el[0]);
+};
 
 var genderCount = (arr) => {
-    
-  let count = _.reduce(arr, (acc, el) => {
-     
-    if(acc[el.gender]){
-     acc[el.gender]++
-    } else {
-      acc[el.gender] = 1;
-    }
-    return acc;
-
-  }, {})
-console.log(count, 'fuckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
-return count;
-}
+  //use reduce passing object as seed
+  let count = _.reduce(
+    arr,
+    //iterate through array
+    (acc, el) => {
+      //if gender exists as a property in seed objects
+      if (acc[el.gender]) {
+        //add to it's value
+        acc[el.gender]++;
+        //if it doesn't, create it and increment by 1
+      } else {
+        acc[el.gender] = 1;
+      }
+      //don't forget to return the accumulator
+      return acc;
+    },
+    {}
+  );
+  // console.log(count, "count***********************************************************************");
+  return count;
+};
 
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////
